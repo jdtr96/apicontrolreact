@@ -5,7 +5,7 @@ export const getUser = () => {
 }
   
 export const getToken = () => {
-    return sessionStorage.getItem('token') || null
+    return sessionStorage.getItem('token')
 }
   
 export const removeUserSession = () => {

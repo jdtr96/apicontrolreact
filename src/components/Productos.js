@@ -1,31 +1,44 @@
 import React, {Component} from 'react';
-import Producto from './Producto'
+import { connect } from 'react-redux';
+import Producto from './Producto';
+
+import * as productoAction from '../actions/productoAction'
 
 class Productos extends Component{
-    constructor (props){
-        super (props)
 
-        this.state = {
-            productos: [],
-            cargando: true
+    componentDidMount() {
+		this.props.traerProductos();
+    }
+
+    agregarContenido = () => {
+        const { producto, cargando, error } = this.props;
+
+		if (cargando) {
+			return <h1>CARGANDO:::::::::</h1>;
+		}
+
+		if (error) {
+			return <h1>{ error }</h1>;
+		}
+
+        if(producto.length >= 0){
+		    return <div className="row row-cols-1 row-cols-md-5 g-4">
+                        {producto.map((pro, key) => <Producto {...pro} key={key}/>)}        
+                   </div>      
         }
-    }
-
-    componentDidMount(){
-        fetch('http://127.0.0.1:8000/api/producto/')
-        .then(response => response.json())
-        .then(pro => this.setState({productos: pro, cargando: false}))
-    }
+	};
 
     render (){
-        const { productos, cargando } = this.state
-        if (cargando){return 'Cargando Datos'}
         return (
-            <div class="row row-cols-1 row-cols-md-5 g-4">
-                {productos.map((pro) => <Producto producto = {pro}/>)}        
+            <div className="container">
+                {this.agregarContenido()}        
             </div>
         ) 
     }
 }
 
-export default Productos
+const mapStateToProps = (reducers) => {
+	return reducers.productoReducer;
+};
+
+export default connect(mapStateToProps, productoAction)(Productos)
